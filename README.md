@@ -1,4 +1,9 @@
 # Reversal
+[![Build Status](https://travis-ci.org/coilo/reversal.svg?branch=master)](https://travis-ci.org/coilo/reversal)
+[![Coverage Status](https://coveralls.io/repos/coilo/reversal/badge.svg?branch=master)](https://coveralls.io/r/coilo/reversal?branch=master)
+[![Code Climate](https://codeclimate.com/github/coilo/reversal/badges/gpa.svg)](https://codeclimate.com/github/coilo/reversal)
+[![Dependency Status](https://gemnasium.com/coilo/reversal.svg)](https://gemnasium.com/coilo/reversal)
+
 A computer reversi game.
 
 ## Reversi
