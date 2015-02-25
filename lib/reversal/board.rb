@@ -32,13 +32,10 @@ module Reversal
     def mobility_iterator!(row, col, down: down, right: right)
       move = 0
       loop do
+        row, col = (row + down), (col + right)
         break unless include?(row, col)
 
-        row += down
-        col += right
-
         move += 1
-
         disc = yield get_disc(row, col), move
         set_disc(row, col, disc)
       end
@@ -71,6 +68,15 @@ module Reversal
       after
     end
 
+    def candidates
+      candidates = {}
+      64.times do |index|
+        row, col = coordinate(index)
+        candidates[[row, col]] = mount(row, col)
+      end
+      candidates
+    end
+
     ##
     def [](row, col)
       get_disc(row, col)
@@ -88,12 +94,17 @@ module Reversal
       center = (@board_size / 2).ceil
       range  = center - 1..center
 
-      row, col = index / @board_size, index % @board_size
+      row, col = coordinate(index)
       if range.include?(row) && range.include?(col)
         row == col ? Reversal::Disc.black : Reversal::Disc.white
       else
         Reversal::Disc.empty
       end
+    end
+
+    ##
+    def coordinate(index)
+      [index / @board_size, index % @board_size]
     end
 
     ##
