@@ -1,5 +1,9 @@
+require 'coveralls'
+Coveralls.wear!
+
 require 'reversal'
 require 'rspec'
+
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

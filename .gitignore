@@ -1,8 +1,10 @@
 #[osx]
 .DS_Store
+.idea
 
 #[ruby]
 Gemfile.lock
 .bundle/
 .ruby-version
 vendor/
+coverage/
