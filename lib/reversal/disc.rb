@@ -4,16 +4,17 @@ module Reversal
   # Reversal Disc class 
   class Disc
     attr_accessor :reverse
+    attr_reader   :raw
     
     def initialize(color)
-      @color = color
+      @raw = color
     end
 
     # Raw value of disc: 
-    raw_disc = { white: -1, empty: 0, black: 1 }
+    raw_disc = { white: :white, empty: :empty, black: :black }
     
-    [:white, :empty, :black].each do |color|
-      instance_variable_set("@#{color}", Disc.new(raw_disc[color]))
+    raw_disc.each do |key, color|
+      instance_variable_set("@#{color}", Disc.new(raw_disc[key]))
 
       # Get Reversal.white, Reversal.empty, Reversal.black
       class_eval <<-EOS
