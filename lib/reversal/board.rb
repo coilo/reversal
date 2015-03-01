@@ -1,54 +1,68 @@
+# coding: utf-8
+
 require 'reversal/disc'
 
-#
 module Reversal
   ##
   BOARD_SIZE = 8
 
-  #
+  # Reversal board class
   class Board
     attr_accessor :order
+    attr_reader   :size
 
     @offsets = []
     Offset = Struct.new(:down, :right)
 
+    # @offsets(:down, :right) =
+    # [0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]
     [-1, 0, 1].repeated_permutation(2) do |down, right|
       next if down == 0 && right == 0
       @offsets << Offset.new(down, right)
     end
 
+    
     ##
     def initialize(board_size = BOARD_SIZE, order = Reversal::Disc.black)
-      @board_size  = board_size
-      @board_range = 0..@board_size - 1
+      @size  = board_size
+      @range = 0..@size - 1
       @order = order
 
-      @board = Array.new(@board_size**2).map.with_index do |_item, index|
-        disc_set(index)
+      # Prepare for the board to use in the game.
+      @board = Array.new(@size**2).map.with_index do |_item, index|
+        prepare(index)
       end
     end
 
+    
     ##
     def mobility_iterator!(row, col, down: down, right: right)
       move = 0
       loop do
-        row, col = (row + down), (col + right)
-        break unless include?(row, col)
+        
+        # End if outside the range of the board.
+        next_r, next_c = (row + down), (col + right)
+        break unless include?(next_r, next_c)
 
+        # Return the disc of the position(row+down, col+right).
         move += 1
-        disc = yield get_disc(row, col), move
-        set_disc(row, col, disc)
+        disc = yield get_disc(next_r, next_c), move
+        
+        # Set the reverse disc in the position(row+down, col+right).
+        set_disc(next_r, next_c, disc)
       end
     end
 
     ##
     def mount(row, col)
       return nil unless include?(row, col)
+      return nil unless is_empty?(row, col)
 
       ##
       after = before = self
       Board.offsets.each do |offset|
-        temp = before.dup
+        temp = before.clone
+        
         temp.mobility_iterator!(row, col, down: offset.down, right: offset.right) do |item, move|
           case item
           when Reversal::Disc.empty
@@ -68,6 +82,7 @@ module Reversal
       after
     end
 
+    # List up(Bug...)
     def candidates
       candidates = {}
       64.times do |index|
@@ -77,21 +92,30 @@ module Reversal
       candidates
     end
 
-    ##
+    # Get the disc instance in position(row, col)
     def [](row, col)
       get_disc(row, col)
     end
 
-    ##
+    # Set the disc instance in position(row, col)
     def []=(row, col, value)
       set_disc(row, col, value)
+    end
+
+    #
+    [:white, :empty, :black].each do |color|
+      class_eval <<-EOS
+        def is_#{color}?(row, col)
+          self[row, col] == Reversal::Disc.#{color}
+       end
+      EOS
     end
 
     private
 
     ##
-    def disc_set(index)
-      center = (@board_size / 2).ceil
+    def prepare(index)
+      center = (@size / 2).ceil
       range  = center - 1..center
 
       row, col = coordinate(index)
@@ -104,21 +128,22 @@ module Reversal
 
     ##
     def coordinate(index)
-      [index / @board_size, index % @board_size]
+      [index / @size, index % @size]
     end
 
-    ##
+    # Query: included within the range
     def include?(row, col)
-      @board_range.include?(row) && @board_range.include?(col)
+      @range.include?(row) && @range.include?(col)
     end
 
-    #
+    # Get the disc instance in position(row, col)
     def get_disc(row, col)
-      @board[row * @board_size + col]
+      @board[row * @size + col]
     end
 
+    # Set the disc instance in position(row, col)
     def set_disc(row, col, value)
-      @board[row + @board_size + col] = value
+      @board[row * @size + col] = value
     end
 
     class << self
