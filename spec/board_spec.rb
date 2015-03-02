@@ -29,10 +29,19 @@ describe Reversal::Board do
   
   it "mount" do
     next_board = @board.mount(4,2)
-    expect(next_board[3,3]).to eq(Reversal::Disc.black)
+    
     expect(next_board[3,4]).to eq(Reversal::Disc.white)
-    expect(next_board[4,2]).to eq(Reversal::Disc.black)
-    expect(next_board[4,3]).to eq(Reversal::Disc.black)
-    expect(next_board[4,4]).to eq(Reversal::Disc.black)
+    [[3,3],[4,2],[4,3],[4,4]].each do |row, col|
+      expect(next_board[row, col]).to eq(Reversal::Disc.black)
+    end
+  end
+  
+  it "candidates" do
+    candidates = @board.candidates
+    
+    [[2,4],[3,5],[4,2],[5,3]].each do |loc|
+      expect(candidates[loc]).to be_an_instance_of(Reversal::Board)
+      expect(candidates[loc].order).to eq(Reversal::Disc.white)
+    end
   end
 end

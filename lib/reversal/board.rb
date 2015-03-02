@@ -20,7 +20,6 @@ module Reversal
       next if down == 0 && right == 0
       @offsets << Offset.new(down, right)
     end
-
     
     ##
     def initialize(board_size = BOARD_SIZE, order = Reversal::Disc.black)
@@ -33,8 +32,13 @@ module Reversal
         prepare(index)
       end
     end
-
     
+    def clone
+      instance = Reversal::Board.new(8, @order.clone)
+      instance.load(@board.clone)
+      instance
+    end
+
     ##
     def mobility_iterator!(row, col, down: down, right: right)
       move = 0
@@ -64,11 +68,11 @@ module Reversal
         temp = before.clone
         
         temp.mobility_iterator!(row, col, down: offset.down, right: offset.right) do |item, move|
-          case item
-          when Reversal::Disc.empty
-            break
-          when @order
-            after = temp if move > 1
+          case item 
+            when Reversal::Disc.empty
+            break 
+            when @order
+              after = temp if move > 1
             break
           end
           item.reverse
@@ -82,7 +86,7 @@ module Reversal
       after
     end
 
-    # List up(Bug...)
+    # List up
     def candidates
       candidates = {}
       64.times do |index|
@@ -109,6 +113,13 @@ module Reversal
           self[row, col] == Reversal::Disc.#{color}
        end
       EOS
+    end
+  
+    protected
+
+    ##
+    def load(board)
+      @board = board if board.kind_of?(Array)
     end
 
     private
