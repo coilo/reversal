@@ -1,5 +1,5 @@
 # coding: utf-8
 
-require 'reversal/disc'
-require 'reversal/board'
-require 'reversal/version'
+['board','client','disc','game','version'].each do |file|
+  require "reversal/#{file}"
+end
