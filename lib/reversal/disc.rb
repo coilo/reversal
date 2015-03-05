@@ -15,9 +15,15 @@ module Reversal
     
     raw_disc.each do |key, color|
       instance_variable_set("@#{color}", Disc.new(raw_disc[key]))
-
-      # Get Reversal.white, Reversal.empty, Reversal.black
+      
+      
       class_eval <<-EOS
+        # Get Reversal::Disc#is_white#black/#empty/#black
+        def is_#{color}?
+          self == Reversal::Disc.#{color}
+        end
+
+        # Get Reversal::Disc.white/.empty/.black
         def self.#{color}
           instance_variable_get("@#{color}")
         end

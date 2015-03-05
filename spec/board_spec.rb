@@ -34,6 +34,8 @@ describe Reversal::Board do
     [[3,3],[4,2],[4,3],[4,4]].each do |row, col|
       expect(next_board[row, col]).to eq(Reversal::Disc.black)
     end
+    
+    expect(next_board.countup).to eq([4,1])
   end
   
   it "candidates" do

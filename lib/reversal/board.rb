@@ -95,6 +95,16 @@ module Reversal
       end
       candidates
     end
+  
+    # Count up
+    def countup
+      bcount = wcount = 0
+      64.times do |index|
+        next if @board[index].is_empty?
+        bcount, wcount = @board[index].is_black? ? [bcount + 1, wcount] : [bcount, wcount + 1]
+      end
+      [bcount, wcount]
+    end
 
     # Get the disc instance in position(row, col)
     def [](row, col)
